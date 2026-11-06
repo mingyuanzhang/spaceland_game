@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f2ed">
+  <meta name="description" content="A first-person, zero-gravity maze game in true three dimensions. Turn and fly any way you like. There is no floor.">
+  <title>Spaceland — One more dimension</title>
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="wordmark" href="./" aria-label="Spaceland home"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 4 26 23 4 23Z"/><path d="M15 4v13M4 23l11-6 11 6"/></svg>spaceland<span class="wordmark-dot">.</span></a>
+      <div class="header-note"><span class="status-dot"></span>AN EXPERIMENT IN PERSPECTIVE</div>
+      <button class="text-button" id="about-button">How to play <span>↗</span></button>
+    </header>
+
+    <main>
+      <section class="intro">
+        <p class="eyebrow"><span class="tiny-line"></span> A WORLD WITH ONE MORE DIMENSION</p>
+        <h1>One more dimension. <em>No more floor.</em></h1>
+        <p class="intro-description">Flatland gave you a line to see and a plane to walk. Here you get all of it: six directions, no gravity, and a maze that goes every way at once.</p>
+      </section>
+
+      <section class="game-section" aria-label="Spaceland game">
+        <div class="section-bar">
+          <span class="eyebrow" id="chapter-label"></span>
+          <button class="text-button" id="levels-button">All levels <span>⊞</span></button>
+        </div>
+        <div class="game-layout">
+          <aside class="level-panel">
+            <div class="level-heading"><span class="level-number" id="level-number">01</span><span class="level-total" id="level-total"></span></div>
+            <div class="difficulty" id="difficulty"></div>
+            <h2 id="level-title"></h2>
+            <p class="level-subtitle" id="level-subtitle"></p>
+            <div class="surface-badge"><span id="surface-label"></span></div>
+            <div class="panel-divider"></div>
+            <p class="objective-label" id="objective-label">YOUR OBJECTIVE</p>
+            <p class="objective" id="objective"></p>
+            <dl class="stats" id="stats" hidden>
+              <div><dt>FLOWN</dt><dd id="stat-flown"></dd></div>
+              <div><dt>SHORTEST</dt><dd id="stat-best"></dd></div>
+              <div><dt>TIME MOVING</dt><dd id="stat-time"></dd></div>
+            </dl>
+            <button class="primary-button" id="next-button" hidden><span>Next world</span><span>→</span></button>
+            <button class="primary-button" id="start-button"><span id="start-label">Enter this world</span><span>→</span></button>
+            <button class="secondary-action" id="peek-button"><span id="peek-label">Peek map</span><span>↗</span></button>
+            <button class="text-button hint-button" id="hint-button"><span class="hint-symbol">◉</span> A little hint</button>
+            <p class="hint-text" id="hint-text" hidden></p>
+            <div class="panel-bottom"><p>No timer to beat.<br>Just a way to find.</p></div>
+          </aside>
+
+          <div class="viewport" id="viewport" tabindex="0" aria-label="First-person game view. Move with W A S D, Space and Shift. Look with the mouse or arrow keys. Roll with Q and E.">
+            <canvas id="view-canvas" aria-label="Your first-person view: painted walls lit by your headlight, and a glowing green exit"></canvas>
+            <div class="view-top"><span class="view-label" id="view-label"></span><span class="dimension-label" id="dimension-label"></span></div>
+            <div class="crosshair" id="crosshair" aria-hidden="true"></div>
+
+            <div class="view-cover" id="view-cover">
+              <h3 id="cover-title"></h3>
+              <p id="cover-text"></p>
+              <span class="cover-note">ENTER THE WORLD TO BEGIN</span>
+            </div>
+
+            <div class="play-hud" id="play-hud" hidden>
+              <dl class="controls-help" id="controls-help">
+                <div><dt>W A S D</dt><dd>fly and strafe</dd></div>
+                <div><dt>Space / Shift</dt><dd>rise / sink</dd></div>
+                <div><dt>Mouse or arrows</dt><dd>look</dd></div>
+                <div><dt>Q / E</dt><dd>roll</dd></div>
+                <div><dt>T</dt><dd>square up with the walls</dd></div>
+                <div><dt>Esc</dt><dd>pause</dd></div>
+              </dl>
+            </div>
+
+            <div class="gyro" id="gyro" hidden role="img" aria-label="Compass ball. The letter at the center is the direction you face.">
+              <canvas id="gyro-canvas"></canvas>
+              <span id="gyro-readout"></span>
+              <span id="walked"></span>
+            </div>
+
+            <div class="pause-panel" id="pause-panel" hidden>
+              <h3>Paused</h3>
+              <button class="primary-button" id="resume-button"><span>Resume</span><span>→</span></button>
+              <button class="secondary-action" id="restart-button"><span>Restart this world</span><span>↺</span></button>
+              <button class="secondary-action" id="give-up-button"><span>Give up &amp; see path</span><span>↗</span></button>
+              <button class="secondary-action" id="quit-button"><span>Leave this world</span><span>←</span></button>
+              <div class="pause-toggles"><button class="text-button" id="invert-button"></button><button class="text-button" id="sound-button"></button></div>
+            </div>
+
+            <div class="replay-bar" id="replay-bar" hidden>
+              <button id="replay-play">Pause</button>
+              <input id="scrubber" type="range" min="0" max="1000" value="0" aria-label="Replay position">
+              <button data-speed="1">1×</button><button data-speed="2">2×</button><button data-speed="4">4×</button>
+            </div>
+
+            <div class="touch-controls" id="touch-controls" hidden>
+              <div class="touch-pad">
+                <button data-hold="KeyR" aria-label="Rise">↥</button><button data-hold="KeyW" aria-label="Forward">▲</button><button data-hold="KeyF" aria-label="Sink">↧</button>
+                <button data-hold="KeyA" aria-label="Strafe left">◀</button><button data-hold="KeyS" aria-label="Backward">▼</button><button data-hold="KeyD" aria-label="Strafe right">▶</button>
+              </div>
+              <div class="touch-side">
+                <button id="touch-pause" aria-label="Pause">❚❚</button><button id="touch-square" aria-label="Square up">⊡</button>
+                <button data-hold="KeyQ" aria-label="Roll left">↺</button><button data-hold="KeyE" aria-label="Roll right">↻</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="level-dialog">
+    <div class="dialog-head"><h3>All worlds</h3><button class="text-button" id="levels-close">Close</button></div>
+    <div class="level-grid" id="level-grid"></div>
+  </dialog>
+
+  <dialog id="about-dialog">
+    <div class="dialog-head"><h3>How to play</h3><button class="text-button" id="about-close">Close</button></div>
+    <p>You float, with nothing pulling you anywhere. Find the mint-green light and fly into it. After each escape you watch your whole route from outside.</p>
+    <dl class="controls-help static">
+      <div><dt>W A S D</dt><dd>fly forward and back, strafe left and right</dd></div>
+      <div><dt>Space / R, Shift / F</dt><dd>rise and sink, relative to your own head</dd></div>
+      <div><dt>Mouse or arrows</dt><dd>look. Up and down keep going: you can loop right over</dd></div>
+      <div><dt>Q / E</dt><dd>roll</dd></div>
+      <div><dt>T</dt><dd>square up with the nearest walls</dd></div>
+      <div><dt>Esc or P</dt><dd>pause, restart, or give up and see your path</dd></div>
+    </dl>
+    <p>Every wall keeps its own color, so familiar paint means you have been here. Green light spills along corridors near the exit and bends around corners, but never passes through a wall. The ball in the corner is a compass fixed to the world: the letter at its center is the direction you face.</p>
+    <p>Later worlds close on themselves: fly far enough and you come back from the other side. If you see a small tetrahedron ahead of you, you are looking at your own back.</p>
+  </dialog>
+
+  <script src="app.bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "spaceland",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A first-person, zero-gravity maze game in true three dimensions.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/server.mjs",
+    "start": "node scripts/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check src/world.js && node --check src/game.js && node --check src/render.js && node --check src/app.js && node --check app.bundle.js",
+    "browser-check": "node scripts/browser-check.mjs"
+  }
+}
